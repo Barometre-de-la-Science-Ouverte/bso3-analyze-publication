@@ -10,11 +10,11 @@ from project.server.main.logger import get_logger
 
 logger = get_logger(__name__)
 SWIFT_SIZE = 10000
-key = os.getenv('OS_PASSWORD')
+key = os.getenv('OS_PASSWORD2')
 project_name = os.getenv('OS_PROJECT_NAME')
 project_id = os.getenv('OS_TENANT_ID')
 tenant_name = os.getenv('OS_TENANT_NAME')
-username = os.getenv('OS_USERNAME')
+username = os.getenv('OS_USERNAME2')
 user = f'{tenant_name}:{username}'
 init_cmd = f"swift --os-auth-url https://auth.cloud.ovh.net/v3 --auth-version 3 \
       --key {key}\
