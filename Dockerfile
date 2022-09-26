@@ -18,10 +18,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locales-all \
     python3-setuptools \
     g++ \
+    git \
+    make \
     python3-dev \
     npm \
     curl \
     zstd \
+    tar \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -41,4 +44,18 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt --proxy=${HTTP_PROXY}
 RUN npm install elasticdump -g
 
+#COPY --from=golang:1.18 /usr/local/go/ /usr/local/go/
+#ENV PATH="/usr/local/go/bin:${PATH}"
+
+#RUN wget -L "https://golang.org/dl/go1.18.1.linux-amd64.tar.gz" && tar -xf "go1.18.1.linux-amd64.tar.gz"
+#ENV PATH="/usr/local/go/bin:${PATH}"
+
+#RUN export PATH="/usr/local/go/bin:${PATH}" && git clone https://github.com/miku/dcdump.git && cd dcdump && make
+
 COPY . /src
+
+#RUN go version
+#RUN git clone https://github.com/miku/dcdump.git && cd dcdump && make
+
+COPY . /src
+#RUN go build -o main .

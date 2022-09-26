@@ -26,12 +26,11 @@ init_cmd = f"swift --os-auth-url https://auth.cloud.ovh.net/v3 --auth-version 3 
       --os-region-name GRA"
 conn = None
 
-def download_container(container, skip_download, download_prefix, volume_destination):
-    if skip_download is False:
-        cmd =  init_cmd + f' download {container} -D {volume_destination}/{container} --skip-identical'
-        if download_prefix:
-            cmd += f" --prefix {download_prefix}"
-        os.system(cmd)
+def download_container(container, download_prefix, volume_destination):
+    cmd =  init_cmd + f' download {container} -D {volume_destination}/{container} --skip-identical'
+    if download_prefix:
+        cmd += f" --prefix {download_prefix}"
+    os.system(cmd)
     if download_prefix:
         return f'{volume_destination}/{container}/{download_prefix}'
     return f'{volume_destination}/{container}'
