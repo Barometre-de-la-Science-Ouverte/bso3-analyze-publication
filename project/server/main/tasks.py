@@ -19,13 +19,16 @@ container = 'bso3_publications_dump'
 def create_task_analyze(args):
     prefix_uid = args.get('prefix_uid', '')
     logger.debug(f'analyze for prefix {prefix_uid}')
+    GROBID_VERSIONS = args.get('GROBID_VERSIONS', [])
+    SOFTCITE_VERSIONS = args.get('SOFTCITE_VERSIONS', [])
+    DATASTET_VERSIONS = args.get('DATASTET_VERSIONS', [])
     if args.get('download', False):
         for fileType in ['metadata', 'grobid', 'softcite', 'datastet']:
             logger.debug(f'getting {fileType} data')
             download_container(container, f'{fileType}/{prefix_uid}', volume)
-    read_all(prefix_uid)
+    read_all(prefix_uid, GROBID_VERSIONS, SOFTCITE_VERSIONS, DATASTET_VERSIONS)
 
-def read_all(prefix_uid):
+def read_all(prefix_uid, GROBID_VERSIONS, SOFTCITE_VERSIONS, DATASTET_VERSIONS):
     ix = 0
     all_data = []
     for root, dirs, files in os.walk(f'{volume}/{container}/metadata/{prefix_uid}'):
@@ -41,15 +44,16 @@ def read_all(prefix_uid):
                     df_metadata = pd.read_json(metadata_filename, lines=True, orient='records')[['doi', 'id']]
                     df_metadata.columns = ['doi', 'uid']
                     res = df_metadata.to_dict(orient='records')[0]
+                    res['sources'] = ['bso3']
                 except:
                     logger.debug(f'error with metadata {metadata_filename}')
                     continue
                 if os.path.exists(grobid_filename):
-                    res.update(json_grobid(grobid_filename))
+                    res.update(json_grobid(grobid_filename, GROBID_VERSIONS))
                 if os.path.exists(softcite_filename):
-                    res.update(json_softcite(softcite_filename))
+                    res.update(json_softcite(softcite_filename, SOFTCITE_VERSIONS))
                 if os.path.exists(datastet_filename):
-                    res.update(json_datastet(datastet_filename))
+                    res.update(json_datastet(datastet_filename, DATASTET_VERSIONS))
                 ix += 1
                 if res.get('authors') or res.get('softcite_details') or res.get('datastet_details'):
                     all_data.append(res)

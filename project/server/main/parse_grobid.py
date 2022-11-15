@@ -4,9 +4,12 @@ from project.server.main.logger import get_logger
 
 logger = get_logger(__name__)
 
-def json_grobid(filename):
+def json_grobid(filename, GROBID_VERSIONS):
     try:
         grobid = BeautifulSoup(open(filename, 'r'), 'lxml')
+        version = grobid.find('application', {'ident': 'GROBID'}).attrs['version']
+        if version not in GROBID_VERSIONS:
+            return {}
         return parse_grobid(grobid)
     except:
         logger.debug(f'error with grobid {filename}')
@@ -17,9 +20,9 @@ def parse_grobid(grobid):
     
     res = {}
     
-    doi_elt = grobid.find('idno', {'type': 'DOI'})
-    if doi_elt:
-        res['doi'] = doi_elt.get_text('').strip().lower()
+    #doi_elt = grobid.find('idno', {'type': 'DOI'})
+    #if doi_elt:
+    #    res['doi'] = doi_elt.get_text('').strip().lower()
     
     authors, affiliations = [], []
     
@@ -60,11 +63,12 @@ def parse_grobid(grobid):
     ref_elt = grobid.find('div', {'type': 'references'})
     if ref_elt:
         for ref in ref_elt.find_all('biblstruct'):
-            reference = {'reference': ref.get_text(' ').replace('\n',' ').strip()}
+            #reference = {'reference': ref.get_text(' ').replace('\n',' ').strip()}
+            reference = {}
             doi_elt = ref.find('idno', {'type': 'DOI'})
             if doi_elt:
                 reference['doi'] = doi_elt.get_text(' ').lower().strip()
-            references.append(reference)
+                references.append(reference)
     if references:
         res['references'] = references
 
