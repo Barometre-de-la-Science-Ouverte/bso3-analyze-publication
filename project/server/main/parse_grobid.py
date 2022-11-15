@@ -73,6 +73,9 @@ def parse_grobid(grobid):
         res['references'] = references
 
     res['has_availability_statement'] = False
+    availability_elt = grobid.find('div', {'type': 'availability'})
+    if availability_elt:
+        res['has_availability_statement'] = True
         
     return res
     
