@@ -39,7 +39,7 @@ def read_all(prefix_uid, GROBID_VERSIONS, SOFTCITE_VERSIONS, DATASTET_VERSIONS):
                 #logger.debug(f'parsing {uid}')
                 grobid_filename   = root.replace('metadata', 'grobid')   + '/' + f.replace('.json.gz', '.pdf.tei.xml')
                 softcite_filename = root.replace('metadata', 'softcite') + '/' + f.replace('.json.gz', '.software.json')
-                datastet_filename = root.replace('metadata', 'datastet') + '/' + f.replace('.json.gz', '.datastet.json')
+                datastet_filename = root.replace('metadata', 'datastet') + '/' + f.replace('.json.gz', '.dataset.json')
                 try:
                     df_metadata = pd.read_json(metadata_filename, lines=True, orient='records')[['doi', 'id']]
                     df_metadata.columns = ['doi', 'uid']

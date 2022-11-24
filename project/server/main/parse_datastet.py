@@ -27,7 +27,7 @@ def parse_mentions(p, mention_type):
         if m.get('wikidataId'):
             current_mention['wikidata'] = m['wikidataId']
         if m.get('url'):
-            current_mention['url'] = m['normalizedForm']
+            current_mention['url'] = m['url']['normalizedForm']
         name = ''
         if mention_type == 'datastet':
             name = m['normalizedForm']
