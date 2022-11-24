@@ -14,14 +14,14 @@ def json_datastet(filename, DATASTET_VERSIONS):
         logger.debug(f'error with datastet {filename}')
         return {}
 
-def parse_mentions(p, mention_type):
+def parse_mentions(p, file_type):
     details = {'mentions': [], 
                         'used': [], 'created': [], 'shared': [],
                         'url': [], 'wikidata': [],
                         'has_used': False, 'has_created': False, 'has_shared': False,
                         'nb_used': 0, 'nb_created': 0, 'nb_shared': 0
                        }
-    res = {f'{mention_type}_details': details}
+    res = {f'{file_type}_details': details}
     for m in p['mentions']:
         current_mention = {}
         if m.get('wikidataId'):
@@ -29,13 +29,17 @@ def parse_mentions(p, mention_type):
         if m.get('url'):
             current_mention['url'] = m['url']['normalizedForm']
         name = ''
-        if mention_type == 'datastet':
+        if file_type == 'datastet':
             name = m['normalizedForm']
-        elif mention_type == 'softcite':
+            print(name)
+        elif file_type == 'softcite':
             name = m['software-name']['normalizedForm']
         current_mention['name'] = name
         for mention_type in ['used', 'created', 'shared']:
-            current_mention[mention_type] = m['documentContextAttributes'][mention_type]['value']
+            if 'documentContextAttributes' in m:
+                current_mention[mention_type] = m['documentContextAttributes'][mention_type]['value']
+            else:
+                current_mention[mention_type] = m['mentionContextAttributes'][mention_type]['value']
             if current_mention[mention_type] and name not in details[mention_type]:
                 if name not in details[mention_type]:
                     details[mention_type].append(name)
@@ -47,5 +51,4 @@ def parse_mentions(p, mention_type):
                 details[f'nb_{mention_type}'] += 1
         if current_mention not in details['mentions']:
             details['mentions'].append(current_mention)
-    
     return res
