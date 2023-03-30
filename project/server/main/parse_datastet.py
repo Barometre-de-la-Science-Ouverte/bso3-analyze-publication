@@ -31,7 +31,6 @@ def parse_mentions(p, file_type):
         name = ''
         if file_type == 'datastet':
             name = m['normalizedForm']
-            print(name)
         elif file_type == 'softcite':
             name = m['software-name']['normalizedForm']
         current_mention['name'] = name

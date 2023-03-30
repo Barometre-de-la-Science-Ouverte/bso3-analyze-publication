@@ -45,18 +45,21 @@ def read_all(prefix_uid, GROBID_VERSIONS, SOFTCITE_VERSIONS, DATASTET_VERSIONS):
                     df_metadata.columns = ['doi', 'uid']
                     res = df_metadata.to_dict(orient='records')[0]
                     res['sources'] = ['bso3']
+                    res['bso3_downloaded'] = True
                 except:
                     logger.debug(f'error with metadata {metadata_filename}')
                     continue
                 if os.path.exists(grobid_filename):
                     res.update(json_grobid(grobid_filename, GROBID_VERSIONS))
+                    res['bso3_analyzed_grobid'] = True
                 if os.path.exists(softcite_filename):
                     res.update(json_softcite(softcite_filename, SOFTCITE_VERSIONS))
+                    res['bso3_analyzed_softcite'] = True
                 if os.path.exists(datastet_filename):
                     res.update(json_datastet(datastet_filename, DATASTET_VERSIONS))
+                    res['bso3_analyzed_datastet'] = True
                 ix += 1
-                if res.get('authors') or res.get('softcite_details') or res.get('datastet_details'):
-                    all_data.append(res)
+                all_data.append(res)
                 if ix % 1000 == 0:
                     logger.debug(f'{ix} files read')
     result_filename = f'bso3_data_{prefix_uid}.jsonl'
